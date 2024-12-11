@@ -115,24 +115,48 @@ Our baseline model uses two key features:
 [INSERT: Add visualization of baseline model predictions vs actual]
 
 ## Final Model
-Our final model built upon the baseline with additional engineered features:
-1. steps_per_ingredient: Measures recipe complexity
-2. time_per_step: Indicates instruction detail level
 
-Model Improvements:
-- Used GradientBoosting Regressor
-- Implemented hyperparameter tuning
-- All preprocessing in single sklearn Pipeline
+Our final model builds upon the baseline by incorporating both numerical and categorical features, with a focus on recipe characteristics that logically influence ratings.
 
-Best Parameters:
+### New Features Engineered
+1. Cooking Categories:
+  - Created meaningful time-based categories: 'quick_meal' (0-15 mins), 'standard_meal' (15-30 mins), 'elaborate_meal' (30-60 mins), and 'slow_cook' (>60 mins)
+  - Rationale: Different cooking times may have different user expectations and rating patterns
+
+2. Recipe Size Categories:
+  - Categorized recipes into 'small', 'medium', and 'large' based on number of ingredients
+  - Rationale: Recipe size might influence complexity and user satisfaction
+
+3. Effort Level:
+  - Combined steps and ingredients to create an effort score
+  - Categorized into 'simple', 'moderate', and 'complex'
+  - Rationale: The effort required might affect user ratings and satisfaction
+
+### Model Implementation
+- Used GradientBoostingRegressor, which showed better performance in initial testing
+- Implemented a preprocessing pipeline including:
+ * StandardScaler for numerical features
+ * OneHotEncoder for categorical features
+- Performed hyperparameter tuning using GridSearchCV with cross-validation
+
+### Best Model Parameters
+- n_estimators: 100
 - learning_rate: 0.01
 - max_depth: 3
-- n_estimators: 100
+- min_samples_leaf: 10
 
-Performance:
-- RMSE: 0.6224
+### Performance Metrics
+- Final Model RMSE: 0.6224
 - R² Score: 0.0001
-- Improvement: 0.02%
+- Improvement over baseline: 0.02%
+
+### Feature Choice Rationale
+Our engineered features were chosen based on culinary domain knowledge:
+1. Time categories reflect common cooking duration breakpoints
+2. Recipe size categories capture complexity through ingredient count
+3. Effort level combines steps and ingredients to represent overall recipe difficulty
+
+While the improvement over the baseline is modest, the model's features provide more interpretable insights into recipe characteristics that might influence ratings. The small improvement suggests that recipe ratings might be influenced more by subjective factors not captured in our current feature set.
 
 ## Fairness Analysis
 Question: Does our model perform equally well for simple versus complex recipes?
