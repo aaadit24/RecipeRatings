@@ -3,11 +3,14 @@
 ## Introduction
 This analysis investigates recipe data from Food.com to understand and predict recipe ratings. The dataset contains 83,782 recipes with information about cooking time, ingredients, steps, and nutritional content. Our main question focuses on predicting recipe ratings based on recipe characteristics.
 
-[Table showing relevant columns and descriptions]
-- Minutes: Minutes to prepare recipe
-- N_steps: Number of steps in recipe
-- N_ingredients: Number of ingredients
-- [Add other relevant columns]
+The dataset consists of two main components:
+
+1. **Recipes Dataset**: This file, `RAW_recipes.csv`, contains details about the recipes such as the name, ID, preparation time, contributor ID, nutrition information, and steps involved in each recipe.
+   - Example columns: `name`, `id`, `minutes`, `contributor_id`, `tags`, `nutrition`, `n_steps`, `steps`, `description`.
+
+2. **Ratings Dataset**: This file, `RAW_interactions.csv`, contains information about user ratings and reviews for each recipe. It includes the user ID, recipe ID, rating, and review text.
+   - Example columns: `user_id`, `recipe_id`, `date`, `rating`, `review`.
+
 
 ## Data Cleaning and Exploratory Data Analysis
 
