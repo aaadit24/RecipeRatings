@@ -1,59 +1,94 @@
-# Recipe Rating Analysis and Prediction
+# Recipe Rating Prediction: A Data Science Analysis
 
 ## Introduction
-This analysis explores the relationship between recipe characteristics and their ratings from Food.com. Our investigation centers around understanding what factors influence recipe ratings and developing a model to predict recipe ratings based on various features. The dataset contains 73,545 recipes with 12 relevant columns including cooking time, number of steps, ingredients, and nutritional information.
+This analysis investigates recipe data from Food.com to understand and predict recipe ratings. The dataset contains 83,782 recipes with information about cooking time, ingredients, steps, and nutritional content. Our main question focuses on predicting recipe ratings based on recipe characteristics.
+
+[Table showing relevant columns and descriptions]
+- Minutes: Minutes to prepare recipe
+- N_steps: Number of steps in recipe
+- N_ingredients: Number of ingredients
+- [Add other relevant columns]
 
 ## Data Cleaning and Exploratory Data Analysis
 
-### Data Cleaning Process
-Our initial data cleaning steps included:
-1. Removing recipes with missing ratings
-2. Handling cooking time outliers using the IQR method
-3. Processing nutritional information into separate columns
+### Cleaning Process
+The primary cleaning steps included:
+- Handling cooking time outliers using IQR method
+- Removing missing values in average ratings
+- Processing nutritional information
 
-[INSERT: Add a DataFrame.head() screenshot showing the cleaned data structure]
+[INSERT: Show cleaned DataFrame head]
 
 ### Univariate Analysis
-The distribution of cooking times shows most recipes take between 15-45 minutes to prepare, with a median of 30 minutes.
+Distribution of cooking times shows most recipes take between 15-45 minutes, with a median of 30 minutes.
 
-[INSERT: Add the histogram of cooking times distribution]
+[INSERT: Add histogram of cooking times]
 
 ### Bivariate Analysis
-When examining the relationship between cooking time and average ratings, we found no strong correlation between these variables.
+Our analysis revealed no strong correlation between cooking time and recipe ratings.
 
-[INSERT: Add the scatter plot of cooking time vs ratings]
+[INSERT: Add scatter plot of cooking time vs ratings]
 
 ### Interesting Aggregates
-Looking at recipe ratings across different cooking duration categories:
-
-[INSERT: Add the aggregated table showing rating statistics by cooking duration]
+[INSERT: Add pivot table showing rating statistics by cooking duration]
 
 ## Assessment of Missingness
 
-In our dataset, we observed two columns with missing values:
-- Rating: 6.11% missing
-- Average Rating: 1.12% missing
+The missingness analysis revealed:
+- Rating missingness is dependent on number of steps (p-value = 0.0000)
+- Rating missingness is independent of cooking time (p-value = 0.8440)
 
-The missingness dependency analysis revealed:
-- Rating missingness depends on the number of steps (p-value = 0.0000)
-- Rating missingness does not depend on cooking time (p-value = 0.8440)
-
-[INSERT: Add the permutation test visualization for missingness]
+[INSERT: Add missingness test visualization]
 
 ## Hypothesis Testing
+We tested whether cooking time influences recipe ratings.
 
-Research Question: Do recipes with longer cooking times tend to receive different ratings than recipes with shorter cooking times?
-
-Null Hypothesis (H0): There is no significant difference in average ratings between recipes with long cooking times and recipes with short cooking times.
-
-Alternative Hypothesis (H1): There is a significant difference in average ratings between recipes with long and short cooking times.
+Null Hypothesis (H0): No significant difference in average ratings between long and short cooking time recipes.
+Alternative Hypothesis (H1): There is a significant difference in ratings between these groups.
 
 Results:
-- Observed difference in means: 0.0012
+- Observed difference: 0.0012
 - P-value: 0.8060
 
-[INSERT: Add the permutation test visualization for hypothesis test]
+[INSERT: Add hypothesis test visualization]
 
-Based on our analysis, we failed to reject the null hypothesis, suggesting that cooking time does not significantly influence recipe ratings.
+## Framing a Prediction Problem
+**Prediction Task:** Predict the average rating of a recipe
 
-[Continue with the remaining sections...]
+**Type:** Regression problem (predicting a continuous value between 1-5)
+
+**Response Variable:** avg_rating
+- Represents the mean rating given to each recipe
+- Scale: 1 to 5 stars
+
+**Evaluation Metric:** Root Mean Square Error (RMSE)
+- Chosen because:
+  1. Same units as our predictions (stars)
+  2. Penalizes larger errors more heavily
+  3. Commonly used in rating prediction tasks
+
+**Features Used for Prediction:**
+- Recipe complexity indicators (minutes, n_steps)
+- Recipe characteristics (n_ingredients)
+- Nutritional information
+- [Add other features used]
+
+## Baseline Model
+Our baseline model uses two key features:
+1. minutes (numerical): Cooking time
+2. calorie_quartile (categorical): Quartile categorization of calories
+
+**Feature Processing:**
+- Numerical features: Standardized using StandardScaler
+- Categorical features: Encoded using OneHotEncoder
+
+**Model Pipeline:**
+1. ColumnTransformer for preprocessing both feature types
+2. Linear Regression as the predictor
+3. All steps implemented in a single sklearn Pipeline
+
+**Performance:**
+- RMSE: [Insert RMSE value]
+- This score represents our baseline for improvement
+
+[INSERT: Add visualization of baseline model predictions vs actual]
