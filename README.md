@@ -72,6 +72,8 @@ Our analysis of missing values revealed:
 2. Missingness Dependency:
    - After performing the permutation tests, we found that the missingness of the rating column depends significantly on n_steps (p-value < 0.05), meaning that recipes with longer cooking times tend to have missing ratings.
    - In contrast, the missingness of rating did not depend on minutes (p-value > 0.05), indicating that the missingness is not related to the time taken to make the food.
+
+<iframe src="plot1.html" width="100%" height="500px"></iframe>
    
 
 ![alt text](image-10.png)
