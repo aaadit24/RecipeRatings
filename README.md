@@ -74,10 +74,9 @@ Our analysis of missing values revealed:
    - In contrast, the missingness of rating did not depend on minutes (p-value > 0.05), indicating that the missingness is not related to the time taken to make the food.
 
 <iframe src="plot1.html" width="100%" height="500px"></iframe>
+<iframe src="plot2.html" width="100%" height="500px"></iframe>
    
 
-![alt text](image-10.png)
-![alt text](image-11.png)
 
 ## Hypothesis Testing
 We tested whether cooking time influences recipe ratings.
