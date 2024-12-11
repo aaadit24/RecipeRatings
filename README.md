@@ -1,1 +1,1 @@
-# RecipeRatings
+## Recipe Ratings Prediction Model
