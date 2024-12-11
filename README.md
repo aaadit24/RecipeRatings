@@ -1,7 +1,16 @@
 # Recipe Rating Prediction: A Data Science Analysis
 
 ## Introduction
-This analysis investigates recipe data from Food.com to understand and predict recipe ratings. The dataset contains 83,782 recipes with information about cooking time, ingredients, steps, and nutritional content. Our main question focuses on predicting recipe ratings based on recipe characteristics.
+This analysis investigates recipe data from Food.com to understand and predict recipe ratings. The dataset contains 83,782 recipes with information about cooking time, ingredients, steps, and nutritional content. Our main question focuses on predicting recipe ratings based on recipe characteristics. This project is valuable because it aims to predict the quality of new recipes based on minimal ratings from users. 
+
+
+The dataset consists of two separate sources:
+
+- Recipes Dataset: Contains detailed information about each recipe, including its ingredients, cooking time, and nutritional information.
+- Ratings Dataset: Includes user ratings and reviews for the recipes listed in the Recipes dataset.
+Initially, these datasets were separate, so the first step was to merge them using the recipe_id field from the ratings dataset and the id field from the recipes dataset. 
+
+After merging, we calculated the average rating per recipe: This was done by grouping the ratings by recipe ID and computing the mean. We then added this average rating back to the recipes dataset.
 
 Relevant columns in our dataset:
 - `minutes`: Time required to cook the recipe
@@ -13,18 +22,20 @@ Relevant columns in our dataset:
 
 ## Data Cleaning and Exploratory Data Analysis
 
-### Cleaning Process
-Initial examination revealed several data quality issues that required attention:
-1. Cooking time outliers (some recipes listed as taking over 1 million minutes)
-2. Missing ratings (2,246 missing values in avg_rating)
-3. Complex nutritional information stored as strings
+### Data Cleaning Process
 
-Our cleaning process included:
-- Removing outliers in cooking time using the IQR method
-- Dropping recipes with missing average ratings
-- Converting nutritional information into separate numeric columns
+During the initial examination of the dataset, several data quality issues were identified that required cleaning:
 
-[INSERT: Show cleaned DataFrame head]
+1. **Cooking time outliers**: Some recipes had cooking times listed as excessively high (over 1 million minutes), which were clearly erroneous.
+- Cooking times were examined for outliers using the **Interquartile Range (IQR)** method. The 25th and 75th percentiles of cooking time were calculated (`Q1` and `Q3`), and any recipe with a cooking time above the **upper bound** (Q3 + 1.5 * IQR) was considered an outlier and removed from the dataset.
+   - This step helped to ensure that the cooking time values were within a reasonable range, preventing erroneous data from skewing subsequent analysis, such as modeling or predictions.
+
+![alt text](image-1.png)
+2. **Zero Rating**: Some ratings were zero which were changes to np.nan
+
+2. **Column Selection**: Multiple columns had no use in the prediction and data analysis process. These were dropped
+
+![alt text](image.png)
 
 ### Univariate Analysis
 The distribution of cooking times revealed important patterns:
@@ -32,7 +43,9 @@ The distribution of cooking times revealed important patterns:
 - Median cooking time is 30 minutes
 - Distribution is right-skewed, with some recipes taking several hours
 
-[INSERT: Add histogram of cooking times]
+![alt text](image-2.png)
+![alt text](image-3.png)
+![alt text](image-4.png)
 
 ### Bivariate Analysis
 When examining the relationship between cooking time and ratings:
@@ -40,38 +53,48 @@ When examining the relationship between cooking time and ratings:
 - Similar rating distributions across different cooking times
 - High ratings (4-5 stars) dominate across all time ranges
 
-[INSERT: Add scatter plot of cooking time vs ratings]
+![alt text](image-5.png)
+![alt text](image-6.png)
 
 ### Interesting Aggregates
 Analyzing ratings across different recipe characteristics:
 - Average ratings by cooking duration quartiles
-- Rating distributions for different complexity levels
-[INSERT: Add pivot table showing rating statistics by cooking duration]
+
+![alt text](image-7.png)
+
 
 ## Assessment of Missingness
 
 Our analysis of missing values revealed:
 1. NMAR Analysis:
-   - Rating column could be NMAR as users might be less likely to rate recipes they didn't make
-   - Additional data about user behavior would be needed to confirm this
+   - Based on the missingness of ratings in the dataset, it’s possible that the rating column is NMAR. This could be because users are less likely to rate recipes they haven’t made. Therefore, the missingness of data in this column is not random. If we had additional data on user behavior, such as whether they interacted with recipes but didn't rate them, we could potentially explain this missingness as Missing At Random (MAR). Without such data, it’s difficult to definitively classify the missingness as MAR. Thus, based on the reasoning above, we conclude that the missingness in the rating column may be NMAR.
 
 2. Missingness Dependency:
-   - Found dependency: Rating missingness depends on number of steps (p-value = 0.0000)
-   - Found no dependency: Rating missingness does not depend on cooking time (p-value = 0.8440)
+   - After performing the permutation tests, we found that the missingness of the rating column depends significantly on n_steps (p-value < 0.05), meaning that recipes with longer cooking times tend to have missing ratings.
+   - In contrast, the missingness of rating did not depend on minutes (p-value > 0.05), indicating that the missingness is not related to the time taken to make the food.
+   
 
-[INSERT: Add missingness test visualization]
+![alt text](image-10.png)
+![alt text](image-11.png)
 
 ## Hypothesis Testing
 We tested whether cooking time influences recipe ratings.
 
 Null Hypothesis (H0): No significant difference in average ratings between long and short cooking time recipes.
 Alternative Hypothesis (H1): There is a significant difference in ratings between these groups.
+Test Statistic: The difference in average ratings between recipes with long and short cooking times.
+Significance Level: 0.05 
 
 Results:
 - Observed difference: 0.0012
-- P-value: 0.8060
+- P-value: 0.9310
 
-[INSERT: Add hypothesis test visualization]
+Conclusion: Since the p-value (0.9310) is much greater than the significance level of 0.05, we fail to reject the null hypothesis. This suggests there is no significant difference in average ratings between long and short cooking time recipes.
+
+Justification: The test statistic (difference in ratings) and p-value were appropriate for testing whether cooking time influences recipe ratings. A high p-value indicates that any observed difference is likely due to random variation, rather than a true effect, making the null hypothesis a reasonable conclusion.
+
+![alt text](image-8.png)
+![alt text](image-9.png)
 
 ## Framing a Prediction Problem
 **Prediction Task:** Predict the average rating of a recipe
@@ -109,10 +132,9 @@ Our baseline model uses two key features:
 3. All steps implemented in a single sklearn Pipeline
 
 **Performance:**
-- RMSE: [Insert RMSE value]
+- RMSE: 0.6285
 - This score represents our baseline for improvement
 
-[INSERT: Add visualization of baseline model predictions vs actual]
 
 ## Final Model
 
@@ -146,7 +168,7 @@ Our final model builds upon the baseline by incorporating both numerical and cat
 - min_samples_leaf: 10
 
 ### Performance Metrics
-- Final Model RMSE: 0.6224
+- Final Model RMSE: 0.0.6284
 - R² Score: 0.0001
 - Improvement over baseline: 0.02%
 
@@ -173,4 +195,4 @@ Results:
 
 These results indicate that our model performs significantly differently between simple and complex recipes, raising fairness concerns that should be addressed in future iterations.
 
-[INSERT: Permutation test visualization for fairness analysis]
+![alt text](image-12.png)
